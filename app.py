@@ -1,13 +1,46 @@
 from flask import Flask, jsonify, send_file
 import time
-import subprocess
+from smbus2 import SMBus
 
 
 app = Flask(__name__)
 
+I2C_BUS = 1
+MAG_ADDR = 0x0D
+
+def _int16(lsb: int, msb: int) -> int:
+	value = (msb << 8) | lsb
+	return value - 65536 if value >=32768 else value
+
+def init_mag(bus: SMBus) -> None:
+	bus.write_byte_data(MAG_ADDR, 0x0B, 0x01) #reset
+	bus.write_byte_data(MAG_ADDR, 0x09, 0x1D) #tryb ciągły
+	time.sleep(0.02)
+
+def read_mag() -> dict:
+	with SMBus(I2C_BUS) as bus:
+		init_mag(bus)
+		raw = bus.read_i2c_block_data(MAG_ADDR, 0x00, 6)
+	
+	return {
+		"addr" : "0x0d",
+		"chip" : "QMC5883L",
+		"x" : _int16(raw[0], raw[1]),
+		"y" : _int16(raw[2], raw[3]),
+		"z" : _int16(raw[4], raw[5])
+		}
+
 @app.route("/")
 def home():
 	return "apo jest zajebiste"
+
+@app.route("/api/magnetometer")
+def api_mag():
+	try:
+		data = read_mag()
+		return jsonify(data)
+	except Exception as exc:
+		return jsonify({"error" : "Failed to read", "details" : str(exc)}), 500
 
 @app.route("/api/sensors")
 def get_sensors():
