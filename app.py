@@ -205,4 +205,5 @@ def get_snapshot():
 	return send_file(output_path, mimetype="image/jpeg")
 
 if __name__ == "__main__":
+	threading.Thread(target=rf_listener_loop, daemon=True).start()
 	app.run(host="0.0.0.0", port=5000)
