@@ -1,0 +1,4 @@
+flask
+spidev
+lgpio
+smbus2
