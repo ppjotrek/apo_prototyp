@@ -4,7 +4,7 @@ from flask import Response
 
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
-STREAM_VIDEO_PATH = PROJECT_DIR / "files" / "progress_spacecraft_docking.mp4"
+STREAM_VIDEO_PATH = PROJECT_DIR / "files" / "progress_spacecraft_docking_h264.mp4"
 
 
 def stream_page() -> Response:
@@ -30,7 +30,9 @@ def stream_page() -> Response:
   </style>
 </head>
 <body>
-  <video src="video" autoplay muted loop playsinline controls></video>
+  <video autoplay muted loop playsinline controls>
+    <source src="video" type="video/mp4">
+  </video>
 </body>
 </html>
 """
