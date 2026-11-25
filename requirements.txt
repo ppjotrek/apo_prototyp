@@ -1,4 +1,4 @@
 flask
-spidev
-lgpio
-smbus2
+#spidev
+#lgpio
+#smbus2

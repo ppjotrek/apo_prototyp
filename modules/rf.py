@@ -1,8 +1,20 @@
 import threading
 import time
 
-import lgpio
-import spidev
+try:
+    import lgpio
+    HAS_LGPIO = True
+except (ImportError, ModuleNotFoundError):
+    HAS_LGPIO = False
+    lgpio = None
+    print("Brak lgpio (Windows) - moduł RF działa w trybie symulacji.")
+try:
+    import spidev
+    HAS_SPIDEV = True
+except (ImportError, ModuleNotFoundError):
+    HAS_SPIDEV = False
+    spidev = None
+    print("Brak spidev (Windows) - komunikacja SPI w module RF działa w trybie symulacji.")
 
 
 SPI_BUS = 0
